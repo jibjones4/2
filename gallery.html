@@ -1,0 +1,110 @@
+<html><head><title>FoxySpider Gallery</title><meta http-equiv="Content-Type" content="text/html;charset=utf-8"></head><body style="margin: 0px;background-color:#F0F0F0;" onload="ExportArrangeImages();" onresize="ExportArrangeImages();">
+<iframe name="hidden0" style="visibility: hidden; display: none;" type=""></iframe>
+<iframe name="hidden1" style="visibility: hidden; display: none;" type=""></iframe>
+<iframe name="hidden2" style="visibility: hidden; display: none;" type=""></iframe>
+<iframe name="hidden3" style="visibility: hidden; display: none;" type=""></iframe>
+<iframe name="hidden4" style="visibility: hidden; display: none;" type=""></iframe>
+<iframe name="hidden5" style="visibility: hidden; display: none;" type=""></iframe>
+<iframe name="hidden6" style="visibility: hidden; display: none;" type=""></iframe>
+<iframe name="hidden7" style="visibility: hidden; display: none;" type=""></iframe>
+<iframe name="hidden8" style="visibility: hidden; display: none;" type=""></iframe>
+<iframe name="hidden9" style="visibility: hidden; display: none;" type=""></iframe>
+<div id="Gallery" style="overflow: hidden;"></div>
+<div id="Footer" style="text-align: left; font-style: italic; font-size: small; display: block;">
+<span style="vertical-align: middle;">Gallery created by <a href="http://www.foxyspider.com/" target="_blank">FoxySpider</a></span>
+<iframe id="FacebookButtonStandard" src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2FFoxySpider&amp;layout=standard&amp;show_faces=false&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=25" scrolling="no" style="border:none; overflow:hidden; width:450px; height:25px;vertical-align: middle;margin: 5px;" allowtransparency="true" frameborder="0"></iframe>
+</div>
+<script language="javascript">
+function ExportArrangeImages()
+{
+  function TemplateDiv(img)
+  {
+    return img.parentNode.parentNode.parentNode;
+  }
+  
+  var Imgs = document.getElementById("Gallery").getElementsByTagName("IMG");
+
+  for (var i=Imgs.length-1;i>-1;i--)
+  {
+    TemplateDiv(Imgs[i]).style.marginRight = TemplateDiv(Imgs[i]).style.marginTop;
+    TemplateDiv(Imgs[i]).style.marginLeft = TemplateDiv(Imgs[i]).style.marginTop;
+  }
+  
+  var FirstImageInRow = 0;
+  var FirstImageInNextRow = 0;
+  var RowNum = 0;
+  var LastRowNum = 0;
+  while (FirstImageInRow < Imgs.length)
+  {
+    var MaxHeight = 0;
+    while (FirstImageInNextRow < Imgs.length &&
+           TemplateDiv(Imgs[FirstImageInRow]).offsetTop == TemplateDiv(Imgs[FirstImageInNextRow]).offsetTop)
+    {
+      if (Imgs[FirstImageInNextRow].clientHeight > MaxHeight)
+        MaxHeight = Imgs[FirstImageInNextRow].clientHeight;
+      FirstImageInNextRow++;
+    }
+
+    for (var i=FirstImageInRow;i<FirstImageInNextRow;i++)
+    {
+      Imgs[i].style.marginTop = Math.ceil((MaxHeight-Imgs[i].clientHeight+2)/2);
+      Imgs[i].style.marginBottom = Math.floor((MaxHeight-Imgs[i].clientHeight+2)/2);
+      Imgs[i].setAttribute("row",RowNum);
+    }
+    FirstImageInRow = FirstImageInNextRow;
+    LastRowNum = RowNum;
+    RowNum++;
+  }
+
+  var MaxWidth = 0;
+  for (var i=0;i<Imgs.length;i++)
+  {
+    if (TemplateDiv(Imgs[i]).clientWidth + TemplateDiv(Imgs[i]).offsetLeft > MaxWidth)
+      MaxWidth = TemplateDiv(Imgs[i]).clientWidth + TemplateDiv(Imgs[i]).offsetLeft;
+  }
+  
+  var FirstImageInRow = 0;
+  var FirstImageInNextRow = 0;
+  while (FirstImageInRow < Imgs.length)
+  {
+    if (Imgs[FirstImageInRow].getAttribute("row") == LastRowNum)
+      break;
+      
+    var MaxWidthInRow = 0;
+    while (FirstImageInNextRow < Imgs.length &&
+           Imgs[FirstImageInRow].getAttribute("row") == Imgs[FirstImageInNextRow].getAttribute("row"))
+    {
+      if (TemplateDiv(Imgs[FirstImageInNextRow]).clientWidth + TemplateDiv(Imgs[FirstImageInNextRow]).offsetLeft > MaxWidthInRow)
+        MaxWidthInRow = TemplateDiv(Imgs[FirstImageInNextRow]).clientWidth + TemplateDiv(Imgs[FirstImageInNextRow]).offsetLeft;
+      FirstImageInNextRow++;
+    }
+
+    var WidthToAdd = MaxWidth - MaxWidthInRow;
+    var WidthRoundUpTimes = WidthToAdd % ((FirstImageInNextRow-FirstImageInRow)-1);
+    
+    if (FirstImageInNextRow == FirstImageInRow + 1)
+    {
+      TemplateDiv(Imgs[FirstImageInRow]).style.marginLeft = parseInt(TemplateDiv(Imgs[FirstImageInRow]).style.marginLeft) + Math.floor(WidthToAdd/2);
+    }
+    else
+    {
+      for (i=FirstImageInRow;i<FirstImageInNextRow-1;i++)
+      {
+        if (WidthRoundUpTimes > 0)
+        {
+          TemplateDiv(Imgs[i]).style.marginRight = parseInt(TemplateDiv(Imgs[i]).style.marginRight) +
+                                      Math.ceil(WidthToAdd/((FirstImageInNextRow-FirstImageInRow)-1));
+          WidthRoundUpTimes--;
+        }
+        else
+        {
+          TemplateDiv(Imgs[i]).style.marginRight = parseInt(TemplateDiv(Imgs[i]).style.marginRight) +
+                                      Math.floor(WidthToAdd/((FirstImageInNextRow-FirstImageInRow)-1));
+        }
+      }
+    }
+    FirstImageInRow = FirstImageInNextRow;
+  }
+}
+</script>
+</body></html>
